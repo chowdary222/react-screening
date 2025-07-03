@@ -37,7 +37,16 @@ export function AppHeader({ links = [] }: { links: { label: string; path: string
             </ul>
           </div>
         </div>
-
+        {/* Third Time Logo and Branding */}
+        <div className="flex items-center mb-4">
+          <img
+            src="/third-time-icon-tiny-white.png"
+            alt="Third Time Logo"
+            className="h-12 w-auto mr-4 bg-black"
+            style={{ maxWidth: 160 }}
+          />
+          <span className="text-3xl font-bold tracking-tight">Third Time</span>
+        </div>
         <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setShowMenu(!showMenu)}>
           {showMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </Button>

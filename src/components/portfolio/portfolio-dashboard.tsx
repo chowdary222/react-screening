@@ -25,14 +25,11 @@ export function PortfolioDashboard() {
     tokens: [],
     totalValue: 0,
   })
+  const [solBalance, setSolBalance] = useState<number>(0)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string>('')
 
-  useEffect(() => {
-    if (account) {
-      fetchPortfolioData()
-    }
-  })
+
 
   const fetchPortfolioData = async () => {
     if (!account) return
@@ -47,19 +44,27 @@ export function PortfolioDashboard() {
         ],
       }
 
-      portfolio.balance = mockData.balance
-      portfolio.tokens = mockData.tokens
-      setPortfolio(portfolio)
+      setPortfolio(prev => ({
+        ...prev,
+        balance: mockData.balance,
+        tokens: mockData.tokens,
+      }))
 
-      const solBalance = mockData.balance / 1000000
+      const solBalance = mockData.balance / 1000000;
+      setSolBalance(solBalance);
     } catch (err) {
-      setError('Error')
+      setError(typeof err === 'string' ? err : err instanceof Error ? err.message : 'An unknown error occurred')
     }
     setIsLoading(false)
   }
 
+  useEffect(() => {
+    if (account) {
+      fetchPortfolioData()
+    }
+  }, [account])
+
   const calculateTotalValue = () => {
-    const now = new Date()
     return portfolio.tokens.reduce((total, token) => {
       return total + parseFloat(token.amount)
     }, 0)
@@ -86,7 +91,7 @@ export function PortfolioDashboard() {
 
   return (
     <div className="p-2 max-w-none overflow-x-hidden">
-      <h1 className="text-5xl font-bold mb-2 whitespace-nowrap overflow-hidden">
+      <h1 className="text-5xl font-bold mb-4">
         My Portfolio Dashboard for Cryptocurrency Assets
       </h1>
 
@@ -94,7 +99,7 @@ export function PortfolioDashboard() {
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-xs">{error}</div>
       )}
 
-      <div className="flex flex-row gap-2 overflow-x-auto min-w-max">
+      <div className="flex flex-col md:flex-row gap-2 flex-wrap overflow-x-auto">
         <Card className="min-w-80 flex-shrink-0">
           <CardHeader>
             <CardTitle className="text-xl whitespace-nowrap">SOL Balance Information</CardTitle>
@@ -104,7 +109,7 @@ export function PortfolioDashboard() {
               <div className="text-lg">Loading your balance...</div>
             ) : (
               <div>
-                <p className="text-4xl font-bold whitespace-nowrap">{formatBalance(portfolio.balance)} SOL</p>
+                <p className="text-4xl font-bold whitespace-nowrap">{formatBalance(solBalance)} SOL</p>
                 <p className="text-base text-gray-500 whitespace-nowrap">Current Network: {cluster.label}</p>
               </div>
             )}
